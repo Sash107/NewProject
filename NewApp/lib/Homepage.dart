@@ -12,6 +12,7 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   @override
+
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
@@ -32,13 +33,13 @@ class _HomepageState extends State<Homepage> {
               Text(
                 "KESARII",
                 style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 40,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFF0F52BA),
                     letterSpacing: 2),
               ),
               SizedBox(
-                height: 80,
+                height: 60,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),
