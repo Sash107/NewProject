@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 import 'Signup_page.dart';
 import 'mainhome.dart';
 
@@ -18,8 +19,63 @@ class _SigninpageState extends State<Signinpage> {
 
   String _Email = '';
   String _Password = '';
+  bool isLoading = false;
 
+  Future<void> signIn() async {
+    setState(() {
+      isLoading = true;
+    });
 
+    final url = 'http://192.168.207.130:8000/signin';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': _Email,
+        'password': _Password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = json.decode(response.body);
+
+      final firstName = responseBody['Firstname'] ?? '';
+      final midname = responseBody['MiddleName'] ?? '';
+      final lastName = responseBody['LastName'] ?? '';
+      final token = responseBody['Token'] ?? '';
+      print('Response body: ${response.body}');
+      print("First Name: ${firstName}");
+
+      if (token.isNotEmpty) {
+        _EmailController.clear();
+        _PasswordController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Successfully logged in')),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Home(
+              firstName: firstName,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: Invalid token')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: ${response.body}')),
+      );
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
   @override
   void dispose() {
     _EmailController.dispose();
@@ -86,10 +142,9 @@ class _SigninpageState extends State<Signinpage> {
                         setState(() {
                           _Email = _EmailController.text;
                           _Password = _PasswordController.text;
+                          signIn();
                         });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                           return Home();
-                           },));
+
                       },
                       child: Text(
                         "Sign In",

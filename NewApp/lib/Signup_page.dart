@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'signin_page.dart';
+
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
@@ -81,6 +83,10 @@ class _SignUpState extends State<SignUp> {
         final responseBody = json.decode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(responseBody['Status'])),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Signinpage()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
